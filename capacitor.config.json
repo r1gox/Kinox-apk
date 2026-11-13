@@ -1,12 +1,16 @@
 {
-  "appId": "com.moviezone.app",
-  "appName": "MovieZone",
+  "appId": "com.kinox.app",
+  "appName": "Kinox",
   "webDir": "www",
+  "backgroundColor": "#0a0611",
   "server": {
     "url": "https://moviezone-teal.vercel.app",
     "cleartext": false,
     "androidScheme": "https",
     "allowNavigation": ["*"]
   },
-  "android": { "allowMixedContent": false }
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#0a0611"
+  }
 }

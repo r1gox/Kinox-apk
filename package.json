@@ -1,6 +1,7 @@
 {
   "name": "kinox-apk",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "description": "Kinox - app Android con bloqueo de anuncios",
   "private": true,
   "dependencies": {
     "@capacitor/android": "^6.1.2",
