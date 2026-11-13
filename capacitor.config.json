@@ -1,0 +1,12 @@
+{
+  "appId": "com.moviezone.app",
+  "appName": "MovieZone",
+  "webDir": "www",
+  "server": {
+    "url": "https://moviezone-teal.vercel.app",
+    "cleartext": false,
+    "androidScheme": "https",
+    "allowNavigation": ["*"]
+  },
+  "android": { "allowMixedContent": false }
+}
