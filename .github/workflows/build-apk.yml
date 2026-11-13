@@ -19,32 +19,41 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: gradle
 
       - name: Node 20
+        if: ${{ hashFiles('package.json') != '' }}
         uses: actions/setup-node@v5
         with:
           node-version: '20'
-          cache: npm
 
-      # El runner ya trae el Android SDK. Solo instalamos lo que el proyecto necesita.
+      - name: Cache de Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      # El runner ya trae el Android SDK; no hace falta android-actions/setup-android
       - name: Instalar plataformas del SDK
         run: |
           yes | sdkmanager --licenses > /dev/null || true
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
-      - name: Instalar dependencias
-        run: npm ci
-
-      - name: Build web
-        run: npm run build
-
-      - name: Sincronizar Capacitor
-        run: npx cap sync android
+      - name: Dependencias y build web (si aplica)
+        run: |
+          if [ -f package.json ]; then
+            if [ -f package-lock.json ]; then npm ci; else npm install; fi
+            npm run build --if-present
+            if ls capacitor.config.* >/dev/null 2>&1; then
+              npx cap sync android
+            fi
+          fi
 
       - name: Compilar APK debug
-        working-directory: android
         run: |
+          if [ -f android/gradlew ]; then cd android; fi
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
 
@@ -52,5 +61,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kinox-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          path: "**/build/outputs/apk/debug/*.apk"
           if-no-files-found: error
